@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -252,19 +253,24 @@ function el(id){ return document.getElementById(id); }
 const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function renderHome(){
-  const cards = TREES.map(function(t){ return '\
+  const cards = TAGGED.map(function(t, i){
+    const meta = SPECIES[t.name] || {pa:'', leaf:'🌳'};
+    const bot = t.bot ? t.bot : '&nbsp;';
+    return '\
     <div class="card-slot reveal">\
-      <a class="card" href="#tree-'+t.id+'" style="--fd:'+(6+(t.id%4))+'s; --fdl:'+((t.id%5)*0.4)+'s;">\
+      <a class="card" href="#tree/'+t.tag+'" style="--fd:'+(6+(i%4))+'s; --fdl:'+((i%5)*0.4)+'s;">\
         <div class="card-in">\
           <span class="tag">#'+t.tag+'</span>\
-          <div class="leaf">'+t.leaf+'</div>\
-          <div class="en">'+t.en+'</div>\
-          <div class="pa">'+t.pa+'</div>\
-          <div class="bot">'+t.bot+'</div>\
+          <div class="leaf">'+meta.leaf+'</div>\
+          <div class="en">'+t.name+'</div>\
+          <div class="pa">'+meta.pa+'</div>\
+          <div class="bot">'+bot+'</div>\
           <div class="go"><span class="dot"></span> Tap to explore</div>\
         </div>\
       </a>\
     </div>'; }).join("");
+
+  const speciesCount = TAGGED.reduce(function(a,t){ if(a.indexOf(t.name)<0) a.push(t.name); return a; }, []).length;
 
   el('app').innerHTML =
     '<header class="top"><div class="wrap"><div class="reveal">'+wordmark+'<div><span class="seal">🌳 Green Census</span></div></div></div></header>'+
@@ -272,9 +278,9 @@ function renderHome(){
       '<h1 class="reveal">Our campus is a <em>living classroom</em></h1>'+
       '<p class="reveal">Every tagged tree tells its own story. Scan a tag on campus — or tap a card below — to meet the trees that share our school.</p>'+
       '<div class="stats reveal">'+
-        '<div class="stat"><div class="n" data-count="14">0</div><div class="l">SPECIES CATALOGUED</div></div>'+
+        '<div class="stat"><div class="n" data-count="'+TAGGED.length+'">0</div><div class="l">TREES TAGGED</div></div>'+
+        '<div class="stat"><div class="n" data-count="'+speciesCount+'">0</div><div class="l">SPECIES FOUND</div></div>'+
         '<div class="stat"><div class="n">QR</div><div class="l">SCAN TO LEARN</div></div>'+
-        '<div class="stat"><div class="n" data-count="100" data-suffix="%">0</div><div class="l">CAMPUS GROWN</div></div>'+
       '</div></div></section>'+
     '<div class="wrap"><div class="grid">'+cards+'</div></div>'+
     '<footer class="reveal">'+wordmark+'<div class="cr">Invictus Green Census · A Campus Tree Trail</div><div class="cr">Designed &amp; Developed by Mohit Sood</div></footer>';
@@ -352,9 +358,111 @@ function runCounters(){
   });
 }
 
+/* ── SURVEY DATA (tags 001–019, field survey July 2026) ── */
+const TAGGED = [
+ {tag:"001",name:"China Palm",bot:"Livistona chinensis",loc:"Left of Main Gate",h:8.0,g:120,age:30,yr:1996,est:true},
+ {tag:"002",name:"Kathal",bot:"Artocarpus heterophyllus",loc:"Gate No. 1, left side",h:9.1,g:null,age:25,yr:2001,est:false},
+ {tag:"003",name:"China Palm",bot:"Livistona chinensis",loc:"Gate No. 1",h:8.5,g:null,age:22,yr:2004,est:false},
+ {tag:"004",name:"China Palm",bot:"Livistona chinensis",loc:"Gate No. 1",h:null,g:null,age:25,yr:2001,est:true},
+ {tag:"005",name:"China Palm",bot:"Livistona chinensis",loc:"Gate No. 1",h:null,g:null,age:30,yr:1996,est:true},
+ {tag:"006",name:"Peepal",bot:"Ficus religiosa",loc:"Park side",h:6.1,g:null,age:10,yr:2016,est:false},
+ {tag:"007",name:"China Palm",bot:"Livistona chinensis",loc:"Pic corner side",h:4.6,g:null,age:2,yr:2024,est:true},
+ {tag:"008",name:"China Palm",bot:"Livistona chinensis",loc:"Right side",h:5.5,g:null,age:2,yr:2024,est:true},
+ {tag:"009",name:"Champa",bot:"Plumeria rubra",loc:"Boundary wall (row of 9–10 trees)",h:4.6,g:null,age:18,yr:2008,est:false},
+ {tag:"010",name:"Champa",bot:"Plumeria rubra",loc:"Gate No. 2, right side",h:4.6,g:null,age:18,yr:2008,est:false},
+ {tag:"011",name:"Chakrasiya",bot:null,loc:"Gate 2, middle (group of 8)",h:9.1,g:null,age:25,yr:2001,est:false},
+ {tag:"012",name:"Kusum",bot:"Schleichera oleosa",loc:"Gate 2, left side",h:12.2,g:null,age:30,yr:1996,est:false},
+ {tag:"013",name:"Foli Palm",bot:null,loc:"Gate 2, left side",h:4.6,g:null,age:15,yr:2011,est:true},
+ {tag:"014",name:"Steel Palm",bot:null,loc:"Gym hall side (big tree)",h:10.7,g:null,age:30,yr:1996,est:true},
+ {tag:"015",name:"Kusum",bot:"Schleichera oleosa",loc:"Outside garden, near car park",h:9.1,g:null,age:25,yr:2001,est:false},
+ {tag:"016",name:"Amaltas",bot:"Cassia fistula",loc:"Outside reception (row of 10)",h:7.6,g:null,age:25,yr:2001,est:false},
+ {tag:"017",name:"Bargad",bot:"Ficus benghalensis",loc:"Reception left side, big tree",h:10.7,g:null,age:22,yr:2004,est:false},
+ {tag:"018",name:"Steel Palm",bot:null,loc:"Near mirror",h:9.1,g:null,age:30,yr:1996,est:true},
+ {tag:"019",name:"Pilkhan",bot:"Ficus virens",loc:"Outside mirror, opposite side",h:12.2,g:null,age:30,yr:1996,est:true}
+];
+
+const SPECIES = {
+  'China Palm':{pa:'ਚੀਨੀ ਪਾਮ',leaf:'🌴',about:'A graceful fan palm with broad, pleated leaves that droop at the tips. Slow-growing and long-lived, it is a favourite along driveways and gates.',benefits:['Evergreen canopy','Wind tolerant','Low maintenance','Ornamental'],fun:'Its leaves open like a hand-held fan — one leaf can be nearly a metre across.'},
+  'Kathal':{pa:'ਕਟਹਲ',leaf:'🍈',about:'The jackfruit tree bears the largest fruit that grows on any tree, straight out of its trunk and thick branches.',benefits:['Edible fruit','Dense shade','Timber value','Supports birds'],fun:'A single jackfruit can weigh more than a school bag full of books — up to 35 kg.'},
+  'Peepal':{pa:'ਪਿੱਪਲ',leaf:'🍃',about:'The sacred fig, with heart-shaped leaves that flutter in the lightest breeze. Famous for releasing oxygen even at night.',benefits:['Oxygen at night','Sacred & cultural','Supports birds','Very long-lived'],fun:'Peepal leaves have a long drip tip that helps rainwater run off quickly.'},
+  'Champa':{pa:'ਚੰਪਾ',leaf:'🌸',about:'Frangipani. Waxy white-and-yellow flowers with a sweet evening fragrance, carried on thick, sculptural branches.',benefits:['Fragrant blooms','Attracts pollinators','Drought hardy','Ornamental'],fun:'Champa flowers have almost no nectar — they fool moths into pollinating them with scent alone.'},
+  'Chakrasiya':{pa:'ਚਕਰਸੀਆ',leaf:'🌳',about:'A broad-crowned shade tree planted in groups along the Gate 2 approach. Species identification is being verified.',benefits:['Shade cover','Wind break','Bird habitat','Fast growing'],fun:'This is one of eight planted together — the campus grove effect keeps the path cool all summer.'},
+  'Kusum':{pa:'ਕੁਸੁਮ',leaf:'🌲',about:'A tall, hardy tree with glossy compound leaves that flush bright red when new. Among the tallest trees on this campus.',benefits:['Tall canopy','Lac host tree','Oil-rich seeds','Erosion control'],fun:'Kusum leaves emerge crimson, not green — the campus looks like it is on fire each spring.'},
+  'Foli Palm':{pa:'ਫੋਲੀ ਪਾਮ',leaf:'🌴',about:'A slender clustering palm planted near Gate 2. Species identification is being verified.',benefits:['Screen planting','Evergreen','Low water need','Ornamental'],fun:'Palms are not really trees — they are giant grasses with no growth rings.'},
+  'Steel Palm':{pa:'ਸਟੀਲ ਪਾਮ',leaf:'🌴',about:'A tall, ringed-trunk palm reaching well above the buildings. Species identification is being verified.',benefits:['Height & landmark','Evergreen','Wind tolerant','Ornamental'],fun:'The rings on the trunk are scars — each one is a leaf that fell years ago.'},
+  'Amaltas':{pa:'ਅਮਲਤਾਸ',leaf:'💛',about:'The golden shower tree. In summer it drops its leaves and hangs itself with chains of brilliant yellow flowers.',benefits:['Spectacular bloom','Medicinal pods','Shade in summer','Pollinator magnet'],fun:'It is the state flower of Kerala and blooms exactly when exams end.'},
+  'Bargad':{pa:'ਬੋਹੜ',leaf:'🌳',about:"India's national tree. It spreads on aerial roots that thicken into new trunks, so one tree can grow into a small forest.",benefits:['Huge canopy','Aerial roots','Bird sanctuary','Centuries-long life'],fun:'The largest banyan in India covers more ground than three football fields.'},
+  'Pilkhan':{pa:'ਪਿਲਖਣ',leaf:'🌳',about:'A fast-growing fig, cousin to the peepal and banyan. Its new leaves flush pink and copper before turning deep green.',benefits:['Fast shade','Fruit for birds','Air purifier','Hardy in heat'],fun:'Pilkhan sheds and regrows its entire canopy in just a few weeks each spring.'}
+};
+
+const F = {
+  location:'Location on campus', height_m:'Height', girth_cm:'Girth',
+  age_years:'Approx. age', planted_year:'Planted around'
+};
+function fmt(k,v){
+  if(v===null||v===undefined||v==='') return null;
+  if(k==='height_m') return v+' m';
+  if(k==='girth_cm') return v+' cm';
+  if(k==='age_years') return v+' years';
+  return String(v);
+}
+
+function shell(inner){
+  el('app').innerHTML =
+    '<header class="top"><div class="wrap">'+wordmark+'</div></header>'+
+    '<section class="detail"><div class="wrap">'+
+      '<a class="back" href="#">← All trees</a>'+inner+
+      '<footer class="reveal">'+wordmark+'<div class="cr">Designed &amp; Developed by Mohit Sood</div></footer>'+
+    '</div></section>';
+  window.scrollTo(0,0);
+}
+
+function renderTagged(tag){
+  const t = TAGGED.find(function(x){ return x.tag === tag; });
+  if(!t){
+    shell('<div class="sheet reveal"><div class="body"><div class="sec">'+
+          '<h3>Tag #'+tag+' not found</h3>'+
+          '<p class="about">This tag has not been surveyed yet. Head back and explore the other trees on campus.</p>'+
+          '</div></div></div>');
+    enhance(); return;
+  }
+  const meta = SPECIES[t.name] || {pa:'',leaf:'🌳',about:'Survey record for this campus tree.',benefits:[],fun:''};
+
+  const rows = [
+    ['Location on campus', t.loc],
+    ['Height', t.h ? t.h+' m' : null],
+    ['Girth', t.g ? t.g+' cm' : null],
+    ['Approx. age', t.age ? t.age+' years' : null],
+    ['Planted around', t.yr || null]
+  ];
+  const fields = rows.map(function(r){
+    return '<div class="field"><div class="k">'+r[0]+'</div><div class="v">'+
+           (r[1] ? r[1] : '<span class="pending">Not recorded</span>')+'</div></div>';
+  }).join('');
+
+  const chips = (meta.benefits||[]).map(function(b){ return '<span class="chip">'+b+'</span>'; }).join('');
+  const bot = t.bot ? '<div class="bot">'+t.bot+'</div>' : '';
+  const note = t.est ? '<div class="sec"><h3>Note</h3><p class="about">Some details for this tree are estimates and are still being verified in the field.</p></div>' : '';
+  const fun = meta.fun ? '<div class="sec"><h3>Did you know?</h3><div class="fun"><div class="b">💡</div><div class="t">'+meta.fun+'</div></div></div>' : '';
+
+  shell('<div class="sheet reveal">'+
+    '<div class="band"><span class="tag">TAG #'+t.tag+'</span><div class="leaf">'+meta.leaf+'</div>'+
+      '<h2>'+t.name+'</h2><div class="pa">'+meta.pa+'</div>'+bot+'</div>'+
+    '<div class="body">'+
+      '<div class="sec"><h3>About this tree</h3><p class="about">'+meta.about+'</p></div>'+
+      '<div class="sec"><h3>Campus record</h3><div class="data">'+fields+'</div></div>'+
+      (chips ? '<div class="sec"><h3>Why it matters</h3><div class="chips">'+chips+'</div></div>' : '')+
+      fun + note +
+    '</div></div>');
+  enhance();
+}
+
 /* ── routing ── */
 function route(){
-  const m = (location.hash || '').match(/^#tree-(\d+)$/);
+  const h = location.hash || '';
+  const live = h.match(/^#tree\/(\d{1,3})$/);
+  if(live){ renderTagged(('00'+live[1]).slice(-3)); return; }
+  const m = h.match(/^#tree-(\d+)$/);
   if(m){ renderTree(parseInt(m[1],10)); } else { renderHome(); }
 }
 window.addEventListener('hashchange', route);
